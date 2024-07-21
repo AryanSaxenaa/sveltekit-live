@@ -34,7 +34,7 @@
           <div class="w-full px-3">
             <button
               type="submit"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-5 px-4 py-2 rounded w-full"
+              class="bg-green-500 hover:bg-blue-700 text-white font-bold mt-5 px-4 py-2 rounded w-full"
             >
               Deploy Bounty
             </button>
@@ -66,7 +66,7 @@
           <div class="w-full md:w-1/3 px-3">
             <button
               type="submit"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold mt-2 px-4 py-2 rounded w-full"
+              class="bg-red-500 hover:bg-blue-700 text-white font-bold mt-2 px-4 py-2 rounded w-full"
             >
               Unlock Bounty
             </button>
