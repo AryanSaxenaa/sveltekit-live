@@ -1,9 +1,9 @@
 // import { error } from '@sveltejs/kit';
 import { createPool, sql } from '@vercel/postgres'
-import { POSTGRES_URL } from '$env/static/private'
+// import { POSTGRES_URL } from '$env/static/private'
 
 export async function load() {
-  const db = createPool({ connectionString: POSTGRES_URL })
+  const db = createPool({ connectionString: "postgres://default:LuevZdA1jNO2@ep-still-smoke-a197j3el-pooler.ap-southeast-1.aws.neon.tech/verceldb?sslmode=require" })
 
   try {
     const { rows: names } = await db.query('SELECT * FROM names')
@@ -11,16 +11,16 @@ export async function load() {
       names: names,
     }
   } catch (error) {
-      console.log(
-        'Table does not exist, creating and seeding it with dummy data now...'
-      )
-      // Table is not created yet
-      await seed()
-      const { rows: names } = await db.query('SELECT * FROM names')
-      return {
-        users: names
-      }
-    } 
+    console.log(
+      'Table does not exist, creating and seeding it with dummy data now...'
+    )
+    // Table is not created yet
+    await seed()
+    const { rows: names } = await db.query('SELECT * FROM names')
+    return {
+      names: names
+    }
+  }
 }
 
 async function seed() {
@@ -43,12 +43,12 @@ async function seed() {
           ON CONFLICT (email) DO NOTHING;
       `,
     client.sql`
-          INSERT INTO names (name, email)
+          INSERT INTO names (name, email, image)
           VALUES ('Rebecca', 'rebecca@tcl.com')
           ON CONFLICT (email) DO NOTHING;
       `,
     client.sql`
-          INSERT INTO names (name, email)
+          INSERT INTO names (name, email, image)
           VALUES ('Vivek', 'vivek@gmail.com')
           ON CONFLICT (email) DO NOTHING;
       `,
@@ -63,42 +63,48 @@ async function seed() {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
+
   update: async ({ request }) => {
     const data = await request.formData();
-    const db = createPool({ connectionString: POSTGRES_URL });
+    const db = createPool({ connectionString: POSTGRES_URL })
     const client = await db.connect();
 
     const id = data.get('id');
     const email = data.get('email');
     const name = data.get('name');
 
-    const updateUser = await client.sql`
-    UPDATE names
-    SET email = ${email}, name = ${name}
-    WHERE id = ${id};
-    `;
-	
+    if (name == '') {
+      const updateUser = await client.sql`
+      UPDATE names
+      SET email = ${email} Where id= ${id};`
+    } else if (email == '') {
+      const updateUser = await client.sql`
+      UPDATE names
+      SET name = ${name} Where id= ${id};`
+    } else {
+      const updateUser = await client.sql`
+      UPDATE names
+      SET name = ${name}, email=${email} Where id= ${id};`
+    }
+
     return { success: true };
   },
 
   delete: async ({ request }) => {
     const data = await request.formData();
-    const db = createPool({ connectionString: POSTGRES_URL });
+    const db = createPool({ connectionString: POSTGRES_URL })
     const client = await db.connect();
 
     const id = data.get('id');
 
     const deleteUser = await client.sql`
     DELETE FROM names
-    WHERE id = ${id};
-    `;
-	
-    return { success: true };
+    WHERE id = ${id};`
   },
 
   create: async ({ request }) => {
     const data = await request.formData();
-    const db = createPool({ connectionString: POSTGRES_URL });
+    const db = createPool({ connectionString: POSTGRES_URL })
     const client = await db.connect();
 
     const email = data.get('email');
@@ -108,7 +114,9 @@ export const actions = {
       INSERT INTO names (name, email)
       VALUES (${name}, ${email})
       ON CONFLICT (email) DO NOTHING;
-    `;
+    `
     return { success: true };
   }
 };
+
+
