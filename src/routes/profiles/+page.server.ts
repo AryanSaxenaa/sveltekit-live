@@ -24,7 +24,7 @@ export async function load() {
 }
 
 async function seed() {
-  const db = createPool({ connectionString: POSTGRES_URL })
+  const db = createPool({ connectionString: "postgres://default:ipx9rtsIFbQ3@ep-yellow-limit-a1c41yv1.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require" })
   const client = await db.connect();
   const createTable = await client.sql`CREATE TABLE IF NOT EXISTS names (
       id SERIAL PRIMARY KEY,
@@ -64,21 +64,21 @@ async function seed() {
 /** @type {import('./$types').Actions} */
 export const actions = {
 	
-  // update: async ({ request }) => {
-  //   const data = await request.formData();
-  //   const db = createPool({ connectionString: POSTGRES_URL })
-  //   const client = await db.connect();
+   update: async ({ request }) => {
+    const data = await request.formData();
+    const db = createPool({ connectionString: POSTGRES_URL })
+    const client = await db.connect();
 
-  //   const email = data.get('email');
-	// 	const name = data.get('name');
+    const email = data.get('email');
+		const name = data.get('name');
 
-  //   const updateUser = await client.sql`
-  //   UPDATE names
-  //   SET email = ${email}, name = ${name}
-  //   WHERE     ;`
+    const updateUser = await client.sql`
+    UPDATE names
+    SET email = ${email}, name = ${name}
+    WHERE     ;`
 	
-	// 	return { success: true };
-	// },
+		return { success: true };
+	},
 
   delete: async ({ request }) => {
     const data = await request.formData();
